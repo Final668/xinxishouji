@@ -33,10 +33,17 @@
 
 ## 在线网页
 
+codex/find-how-to-browse-webpage-0n2n2o
 本仓库已添加 GitHub Pages 静态采集工作台原型 `index.html`。仓库 Pages 发布源选择 `main` 分支的 `/(root)` 后，可通过以下地址访问：
 
 <https://final668.github.io/xinxishouji/>
 
 当前网页顶部提供“开始搜集信息”按钮和“规则配置”入口，支持在浏览器本地配置多平台采集规则、合规确认、模拟运行日志、模拟结果预览，以及导出后端调度器可读取的 JSON 任务配置。GitHub Pages 只能运行静态前端页面，真正自动化采集需要另外部署后端服务，并优先接入官方 API、授权数据源、RSS、人工上传或平台允许的公开分享内容。
 
+
+本仓库已添加 GitHub Pages 首页文件 `index.html`。仓库 Pages 发布源选择 `main` 分支的 `/(root)` 后，可通过以下地址访问：
+
+<https://final668.github.io/xinxishouji/>
+
+main
 如果页面暂时无法打开，请等待 GitHub Pages 部署完成，或在仓库的 **Settings → Pages** 页面查看最新部署状态。
