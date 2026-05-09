@@ -193,6 +193,44 @@
     .command-item strong { display: block; }
     .command-item span { color: var(--muted); font-size: 0.92rem; }
 
+    .collection-entry {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      padding: 24px;
+      border: 2px solid rgba(37, 99, 235, 0.28);
+      background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+    }
+
+    .collection-entry p { margin: 8px 0 0; color: var(--muted); }
+
+    .start-button {
+      min-height: 58px;
+      padding: 0 24px;
+      border-radius: 18px;
+      font-size: 1.05rem;
+      white-space: nowrap;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .result-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .result-card span { color: var(--muted); font-size: 0.82rem; }
+    .result-card strong { display: block; margin-top: 4px; }
+    .result-card p { margin: 8px 0 0; color: var(--muted); font-size: 0.92rem; }
+
     .section { padding: 26px 0; }
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
     .section-head p { max-width: 720px; margin: 10px 0 0; color: var(--muted); }
@@ -331,14 +369,17 @@
     @media (max-width: 960px) {
       .hero,
       .workspace,
-      .split { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .split,
+      .collection-entry { grid-template-columns: 1fr; }
+      .metrics,
+      .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 680px) {
       .topbar { align-items: flex-start; flex-direction: column; }
       .nav { justify-content: flex-start; }
       .metrics,
+      .results-grid,
       .checkbox-grid,
       .rule-meta { grid-template-columns: 1fr; }
       .command-item { grid-template-columns: auto 1fr; }
@@ -353,6 +394,7 @@
       <span>xinxishouji</span>
     </a>
     <nav class="nav" aria-label="主要导航">
+      <a href="#start">开始搜集</a>
       <a href="#dashboard">采集面板</a>
       <a href="#rules">规则配置</a>
       <a href="#workflow">运行流程</a>
@@ -365,12 +407,13 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="card hero-card">
         <span class="badge">合规优先 · 自动化采集工作台原型</span>
-        <h1 id="hero-title">配置监控规则，统一管理多平台公开数据采集。</h1>
+        <h1 id="hero-title">不是报告页：这是可点击的多平台信息搜集工作台。</h1>
         <p class="lead">
-          这个页面把项目方案升级为可操作的采集控制台：你可以配置平台、关键词、频率、合规状态和通知方式，生成可交给后端 Connector 执行的任务配置。GitHub Pages 只能运行前端页面，真正采集需要后端服务与官方 API / 授权数据源配合。
+          你可以从“开始搜集信息”入口一键体验，也可以先配置平台、关键词、频率、合规状态和通知方式，再生成交给后端 Connector 执行的任务配置。GitHub Pages 只能运行前端页面，真实采集需要后端服务与官方 API / 授权数据源配合。
         </p>
         <div class="actions">
-          <a class="btn primary" href="#rules">新建采集规则</a>
+          <button class="btn primary" type="button" data-action="start">🚀 立即开始搜集信息</button>
+          <a class="btn ghost" href="#rules">手动新建采集规则</a>
           <button class="btn ghost" type="button" data-action="seed">载入示例规则</button>
           <a class="btn ghost" href="docs/PROJECT_DESIGN.md">查看方案文档</a>
         </div>
@@ -399,18 +442,40 @@
       </aside>
     </section>
 
+    <section class="section" id="start" aria-labelledby="start-title">
+      <div class="card collection-entry">
+        <div>
+          <span class="badge">明显入口</span>
+          <h2 id="start-title" style="margin-top: 12px;">开始搜集信息</h2>
+          <p>点击右侧按钮会自动载入一组示例规则，并模拟生成采集任务、运行日志和结果预览。配置自己的关键词后，按钮会按你的规则重新生成任务配置。</p>
+        </div>
+        <button class="btn primary start-button" type="button" data-action="start">开始搜集信息</button>
+      </div>
+    </section>
+
     <section class="section" id="dashboard" aria-labelledby="dashboard-title">
       <div class="section-head">
         <div>
           <h2 id="dashboard-title">采集面板</h2>
           <p>当前页面会把规则保存在浏览器本地，用来验证采集方案和生成后端任务配置。</p>
         </div>
+        <button class="btn primary" type="button" data-action="start">运行采集任务</button>
       </div>
       <div class="metrics" aria-live="polite">
         <div class="metric"><span>已配置规则</span><strong id="metric-rules">0</strong></div>
         <div class="metric"><span>启用平台</span><strong id="metric-platforms">0</strong></div>
         <div class="metric"><span>合规通过</span><strong id="metric-safe">0</strong></div>
         <div class="metric"><span>模拟线索</span><strong id="metric-leads">0</strong></div>
+      </div>
+      <div class="card panel" id="collection-results" style="margin-top: 16px;">
+        <div class="section-head" style="margin-bottom: 0;">
+          <div>
+            <h3>搜集结果预览</h3>
+            <p id="result-summary">还没有运行采集任务。点击“开始搜集信息”体验入口。</p>
+          </div>
+          <button class="btn small ghost" type="button" data-action="start">重新搜集</button>
+        </div>
+        <div class="results-grid" id="result-list"></div>
       </div>
     </section>
 
@@ -569,6 +634,8 @@
     const rulesList = document.querySelector("#rules-list");
     const configJson = document.querySelector("#config-json");
     const runLog = document.querySelector("#run-log");
+    const resultSummary = document.querySelector("#result-summary");
+    const resultList = document.querySelector("#result-list");
     const metrics = {
       rules: document.querySelector("#metric-rules"),
       platforms: document.querySelector("#metric-platforms"),
@@ -724,6 +791,41 @@
       }).join("");
     }
 
+    function renderResults(rules, hasRun = false) {
+      if (!hasRun) {
+        resultSummary.textContent = "还没有运行采集任务。点击“开始搜集信息”体验入口。";
+        resultList.innerHTML = "";
+        return;
+      }
+      const safeRules = rules.filter((rule) => rule.compliance);
+      if (!safeRules.length) {
+        resultSummary.textContent = "没有可运行的合规规则，请先创建规则并勾选合规确认。";
+        resultList.innerHTML = "";
+        return;
+      }
+      const previews = safeRules.flatMap((rule) =>
+        rule.platforms.slice(0, 2).map((platform) => ({ rule, platform }))
+      ).slice(0, 6);
+      resultSummary.textContent = `已按 ${safeRules.length} 条合规规则生成 ${previews.length} 条模拟搜集结果。`;
+      resultList.innerHTML = previews.map(({ rule, platform }, index) => {
+        const keyword = escapeHtml(rule.keywords[index % rule.keywords.length] || "关键词");
+        return `<article class="result-card"><span>${escapeHtml(platform)} · ${escapeHtml(rule.purpose)}</span><strong>${keyword}</strong><p>模拟发现一条匹配线索。真实内容需要后端 Connector 通过合规数据源采集后写入。</p></article>`;
+      }).join("");
+    }
+
+    function startCollection() {
+      let rules = readRules();
+      if (!rules.length) {
+        writeRules(sampleRules);
+        rules = readRules();
+      } else {
+        render();
+      }
+      renderLogs(rules);
+      renderResults(rules, true);
+      document.querySelector("#collection-results").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     function render() {
       const rules = readRules();
       const platformSet = new Set(rules.flatMap((rule) => rule.platforms));
@@ -740,6 +842,7 @@
         : `<div class="card empty">还没有规则。请在左侧创建规则，或点击“载入示例规则”。</div>`;
       configJson.textContent = JSON.stringify(toTaskConfig(rules), null, 2);
       renderLogs(rules);
+      renderResults(rules, false);
     }
 
     form.addEventListener("submit", (event) => {
@@ -769,9 +872,14 @@
       }
       if (action === "seed") {
         writeRules(sampleRules);
+        renderResults(readRules(), true);
+      }
+      if (action === "start") {
+        startCollection();
       }
       if (action === "simulate") {
         renderLogs(readRules());
+        renderResults(readRules(), true);
       }
       if (action === "copy") {
         await navigator.clipboard.writeText(configJson.textContent);
