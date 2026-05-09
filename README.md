@@ -18,6 +18,7 @@
 1. [项目设计方案](docs/PROJECT_DESIGN.md)：整体架构、模块划分、数据流和技术选型。
 2. [迭代路线图](docs/ROADMAP.md)：从 MVP 到可运营系统的分阶段计划。
 3. [合规与风险清单](docs/COMPLIANCE.md)：平台接入、隐私、风控和内容处理边界。
+4. [GitHub Pages PR 冲突排查说明](docs/GITHUB_PAGES_PR_CONFLICTS.md)：处理 PR 中 `README.md` 与 `index.html` 冲突。
 
 ## 当前阶段
 
