@@ -29,3 +29,11 @@
 - 团队是否已经拥有 X、Reddit 或其他平台的官方 API 权限？
 
 确认这些问题后，可以进入 MVP 开发：先选 1 个合规且稳定的数据源，打通“采集 → 入库 → 搜索 → 通知”的最小闭环。
+
+## 在线网页
+
+本仓库已添加 GitHub Pages 首页文件 `index.html`。仓库 Pages 发布源选择 `main` 分支的 `/(root)` 后，可通过以下地址访问：
+
+<https://final668.github.io/xinxishouji/>
+
+如果页面暂时无法打开，请等待 GitHub Pages 部署完成，或在仓库的 **Settings → Pages** 页面查看最新部署状态。

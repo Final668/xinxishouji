@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xinxishouji｜多平台资讯自动化收集蓝图</title>
+  <meta
+    name="description"
+    content="xinxishouji 是一个面向闲鱼、小红书、X 和 Reddit 等平台的合规资讯/线索自动化收集项目蓝图。"
+  />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-strong: #eef5ff;
+      --text: #14213d;
+      --muted: #5f6f89;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --accent: #14b8a6;
+      --line: #dbe4f0;
+      --shadow: 0 24px 60px rgba(20, 33, 61, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(37, 99, 235, 0.16), transparent 28rem),
+        radial-gradient(circle at 82% 12%, rgba(20, 184, 166, 0.16), transparent 24rem),
+        var(--bg);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .site-header,
+    .site-main,
+    .site-footer {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 14px 22px;
+      font-size: 0.96rem;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 28px;
+      align-items: stretch;
+      padding: 36px 0 48px;
+    }
+
+    .hero-card,
+    .panel {
+      border: 1px solid rgba(219, 228, 240, 0.88);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      padding: clamp(28px, 5vw, 56px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #075985;
+      background: #e0f2fe;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.18;
+      letter-spacing: -0.035em;
+    }
+
+    h1 {
+      max-width: 740px;
+      font-size: clamp(2.4rem, 6vw, 5.2rem);
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+    }
+
+    h3 {
+      font-size: 1.08rem;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.15rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.primary {
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.26);
+    }
+
+    .button.secondary {
+      color: var(--text);
+      background: white;
+      border-color: var(--line);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .status-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .status-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -52px -52px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: rgba(20, 184, 166, 0.16);
+    }
+
+    .pipeline {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .step-number {
+      display: grid;
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border-radius: 10px;
+      color: white;
+      background: var(--accent);
+      font-weight: 800;
+    }
+
+    .section {
+      padding: 30px 0;
+    }
+
+    .section-heading {
+      max-width: 760px;
+      margin-bottom: 22px;
+    }
+
+    .section-heading p {
+      margin: 12px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      padding: 24px;
+      box-shadow: 0 16px 38px rgba(20, 33, 61, 0.08);
+    }
+
+    .panel p,
+    .panel ul {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0;
+      margin: 20px 0 0;
+      list-style: none;
+    }
+
+    .tag-list li {
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #0f766e;
+      background: #ccfbf1;
+      font-weight: 700;
+      font-size: 0.94rem;
+    }
+
+    .notice {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid #fde68a;
+      border-radius: 22px;
+      background: #fffbeb;
+      color: #713f12;
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #854d0e;
+    }
+
+    .site-footer {
+      padding: 36px 0 48px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 860px) {
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav {
+        justify-content: flex-start;
+      }
+
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="xinxishouji 首页">
+      <span class="brand-mark">信</span>
+      <span>xinxishouji</span>
+    </a>
+    <nav class="nav" aria-label="主要导航">
+      <a href="#features">核心能力</a>
+      <a href="#architecture">架构流程</a>
+      <a href="#docs">项目文档</a>
+      <a href="#compliance">合规边界</a>
+    </nav>
+  </header>
+
+  <main class="site-main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-card">
+        <p class="eyebrow">多平台资讯 / 线索自动化收集蓝图</p>
+        <h1 id="hero-title">把分散在多个平台的公开信号，整理成可行动的线索。</h1>
+        <p class="hero-copy">
+          xinxishouji 面向闲鱼、小红书、X（Twitter）和 Reddit 等来源，规划从采集、清洗、去重、分析到通知的完整工作流，帮助团队合规地发现商机、趋势和内容选题。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="docs/PROJECT_DESIGN.md">查看设计方案</a>
+          <a class="button secondary" href="docs/ROADMAP.md">查看迭代路线图</a>
+        </div>
+      </div>
+
+      <aside class="status-card panel" aria-labelledby="status-title">
+        <div>
+          <p class="eyebrow">当前阶段</p>
+          <h2 id="status-title">产品与技术方案设计中</h2>
+          <p>
+            现阶段优先确认使用场景、数据来源授权方式、采集频率和通知需求，再进入 MVP 开发。
+          </p>
+        </div>
+        <div class="pipeline" aria-label="核心流程">
+          <div class="pipeline-step"><span class="step-number">1</span><span>配置关键词、账号、社区和价格区间</span></div>
+          <div class="pipeline-step"><span class="step-number">2</span><span>通过合规数据源增量采集公开信息</span></div>
+          <div class="pipeline-step"><span class="step-number">3</span><span>清洗、去重、评分并生成通知或报告</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="section-heading">
+        <h2 id="features-title">核心能力</h2>
+        <p>先建立稳定、可审计的数据闭环，再逐步扩展到更多平台和更高阶分析能力。</p>
+      </div>
+      <div class="grid">
+        <article class="panel">
+          <h3>多平台采集</h3>
+          <p>支持按关键词、话题、作者、社区、商品类目和价格区间等规则进行监控，并预留更多平台接入能力。</p>
+        </article>
+        <article class="panel">
+          <h3>统一数据模型</h3>
+          <p>把帖子、商品、评论、作者和互动数据整理成统一结构，便于搜索、筛选、评分和后续分析。</p>
+        </article>
+        <article class="panel">
+          <h3>分析与通知</h3>
+          <p>围绕趋势、情绪、意图和机会评分生成日报、周报或即时告警，减少人工筛选成本。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="architecture" aria-labelledby="architecture-title">
+      <div class="section-heading">
+        <h2 id="architecture-title">建议架构流程</h2>
+        <p>项目推荐采用“配置中心 → 调度队列 → 平台 Connector → 数据处理 → 分析通知”的解耦架构。</p>
+      </div>
+      <div class="panel">
+        <ul class="tag-list" aria-label="架构模块">
+          <li>采集配置中心</li>
+          <li>调度与任务队列</li>
+          <li>平台 Connector</li>
+          <li>原始数据层</li>
+          <li>清洗与去重</li>
+          <li>搜索索引</li>
+          <li>分析评分</li>
+          <li>通知报表</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="docs" aria-labelledby="docs-title">
+      <div class="section-heading">
+        <h2 id="docs-title">项目文档</h2>
+        <p>如果你想继续开发，可以先按下面顺序阅读文档。</p>
+      </div>
+      <div class="grid">
+        <article class="panel">
+          <h3><a href="docs/PROJECT_DESIGN.md">项目设计方案</a></h3>
+          <p>了解项目定位、典型场景、模块划分、数据模型和技术选型建议。</p>
+        </article>
+        <article class="panel">
+          <h3><a href="docs/ROADMAP.md">迭代路线图</a></h3>
+          <p>从 MVP 到运营工作台，逐步规划采集、搜索、通知、分析和稳定性建设。</p>
+        </article>
+        <article class="panel">
+          <h3><a href="docs/COMPLIANCE.md">合规与风险清单</a></h3>
+          <p>明确平台接入、数据最小化、删除更新、权限控制和上线前检查事项。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="compliance" aria-labelledby="compliance-title">
+      <div class="notice">
+        <span aria-hidden="true">⚠️</span>
+        <div>
+          <strong id="compliance-title">合规优先</strong>
+          项目只应采集你有权访问、平台规则允许、且符合当地法律法规的数据；优先使用官方 API、开放数据源或授权能力，不绕过登录、验证码、风控、隐私设置或付费墙。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 xinxishouji. 面向合规数据聚合与情报工作台的项目蓝图。</p>
+  </footer>
+</body>
+</html>
